@@ -13,7 +13,7 @@ Steady state compiler for rydberg analysis of state
  need some more detail on this 
 
 
-### Python libaries and modules required to make this code run 
+### Python dependencies - libaries and modules required to make this code run 
 
 sys - https://docs.python.org/3/library/sys.html
 qutip - https://qutip.org/
@@ -22,5 +22,9 @@ pandas - https://pandas.pydata.org/
 numpy - https://numpy.org/
 Scipy - https://scipy.org/
 matlibplot - https://matplotlib.org/stable/tutorials/introductory/pyplot.html
+
+
+### user notes
+
 
 
