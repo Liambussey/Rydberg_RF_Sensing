@@ -9,9 +9,16 @@ The files contained in the Github have been used in the publication of xxxx
 ## Python code 
 
 ### Background
-Steady state compiler for rydberg analysis of state
 
- need some more detail on this 
+This Python Script contained in the file labeled Rydberg_Code. The main program file is called Rydberg_Cs_example_paper_natural_decay_multiple_lines.py and is used to solve the Master equation for an N-level cascade system were our atomic system interacts with either laser or RF fields. This file takes in user information on the system for atom species energy level tranistion, laser and RF parameters to solve the Master equation.
+
+The Master equation:
+
+ $$\frac{\partial \hat{\rho}}{\partial t} = -\frac{i}{\hbar}\left[\hat{H}, \hat{\rho}\right] + \hat{\mathcal{L}}(\hat{\rho})$$
+
+where $\hat{H}$ is the Hamiltonian of the atom-light system, $\hat{\rho}$ is the density matrix and $\hat{\mathcal{L}}$ describes the decay and dephasing in the system. 
+
+
 
  ### assumption used
 
@@ -27,7 +34,7 @@ Scipy - https://scipy.org/
 matlibplot - https://matplotlib.org/stable/tutorials/introductory/pyplot.html
 
 
-### user notes
+## user notes
 
 
 
