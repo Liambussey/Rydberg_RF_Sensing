@@ -1,4 +1,4 @@
-#### Rydberg Numerical model for N-level cascade Systems for Atomic RF Sensing applications
+# Rydberg Numerical model for N-level cascade Systems for Atomic RF Sensing applications
 
 Code Author: Liam W Bussey
 
@@ -6,14 +6,17 @@ This is a collabrative piece of work between BT and University of Birmingham by 
 
 The files contained in the Github have been used in the publication of xxxx 
 
-#### Python code 
+## Python code 
 
+### Background
 Steady state compiler for rydberg analysis of state
 
  need some more detail on this 
 
+ ### assumption used
 
-### Python dependencies - libaries and modules required to make this code run 
+
+## Python dependencies - libaries and modules required to make this code run 
 
 sys - https://docs.python.org/3/library/sys.html
 qutip - https://qutip.org/
