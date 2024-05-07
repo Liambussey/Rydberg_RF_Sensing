@@ -10,7 +10,7 @@ The files contained in the Github have been used in the publication of xxxx
 
 ### Background
 
-This Python Script contained in the file labeled Rydberg_Code. The main program file is called Rydberg_Cs_example_paper_natural_decay_multiple_lines.py and is used to solve the Master equation for an N-level cascade system were our atomic system interacts with either laser or RF fields. This file takes in user information on the system for atom species energy level tranistion, laser and RF parameters to solve the Master equation.
+This Python Script contained in the file labeled Rydberg_Code. The main program file is called Rydberg_Cs_example_paper_natural_decay_multiple_lines.py and is used to solve the Master equation for an N-level cascade system were our atomic system interacts with either laser or RF fields. This file takes in user information on the system for atom species, energy level tranistion, laser and RF parameters to solve the Master equation.
 
 The Master equation:
 
