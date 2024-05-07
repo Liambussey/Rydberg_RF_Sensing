@@ -1,6 +1,10 @@
-Rydberg_Numerical model for RF sensing
+#### Rydberg Numerical model for N-level cascade Systems for Atomic RF Sensing applications
 
-Use the read me file to update information on libaries and how the code should be excuted. Rydberg masters project UoB
+Code Author: Liam W Bussey
+
+This is a collabrative piece of work between BT and University of Birmingham by the sponsorship of the code author from the Royal Commission for the Exhibition of 1851 as part of their industrial fellowship.
+
+The files contained in the Github have been used in the publication of xxxx 
 
 ######## Python code ######
 
