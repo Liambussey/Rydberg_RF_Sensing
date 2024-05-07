@@ -6,14 +6,14 @@ This is a collabrative piece of work between BT and University of Birmingham by 
 
 The files contained in the Github have been used in the publication of xxxx 
 
-######## Python code ######
+#### Python code 
 
 Steady state compiler for rydberg analysis of state
 
  need some more detail on this 
 
 
-######## Python libaries and modules required to make this code run ########
+### Python libaries and modules required to make this code run 
 
 sys - https://docs.python.org/3/library/sys.html
 qutip - https://qutip.org/
