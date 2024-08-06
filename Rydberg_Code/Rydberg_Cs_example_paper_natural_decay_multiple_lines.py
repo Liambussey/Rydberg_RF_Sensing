@@ -37,6 +37,7 @@ from typing import Type
 from numpy.lib.function_base import append
 from qutip.qobj import Qobj
 from brokenaxes import brokenaxes
+from typing import Union
 
 sys.path.append('C:/Users/liamw/Desktop/Rydberg_Git/Github/rydberg_theory') 
 sys.path.append('C:/Users/liamw/Desktop/Rydberg_Git/Github/rydberg_theory/src')
@@ -103,8 +104,16 @@ plt.rcParams['xtick.labelsize'] = 18
 plt.rcParams['ytick.labelsize'] = 18
 plt.rcParams['figure.titlesize'] = 20
 
-class laser_parameter():
-    def set_feild(self, f, OAM_list = ['L','R']):
+class laser_parameter:
+    """The laser and radio frequency wave parameters. These are the key experimental parameters, such as power, polarisation, wavelength etc. 
+    """
+    def set_feild(self, f: str) -> None:
+        """The type of EM field to be described. 
+
+        Args:
+            f (str): If the field is a laser field, f will be set to 'L', and if f is a radio wave field, then 'R'.
+        """
+        OAM_list = ['L','R']
         while True:
             if f != 'Unset':
                 self.feild = str.upper(f)
@@ -124,7 +133,12 @@ class laser_parameter():
                     print("That makes no sense...")
                     continue
     
-    def set_temp(self, temp):
+    def set_temp(self, temp: float) -> None:
+        """Sets the operating temperature of the atoms under investigation.
+
+        Args:
+            temp (float): The temperature in K.
+        """
         while True:
             if temp != 'Unset':
                 self.temp = float(temp)
@@ -135,11 +149,16 @@ class laser_parameter():
                 self.temp = float(my_input)
                 break
 
-    def set_MW_feild(self,feild, vm):
+    def set_MW_feild(self,feild: str, vm: float) -> None:
+        """Sets the radio wave electric field strength. This function will return np.Nan if the laser field type is 'L'.
+
+        Args:
+            feild (str): Field type. This should be 'R' as it will relate to the radio wave field strength.
+            vm (float): The radio wave field strength in V m^(-1).
+        """
         if (feild == 'R'):
             if vm != 'Unset':
                 self.p_rf = float(vm)
-                #print(self.p_rf) 
             else:           
                 my_input = float(input('enter maxium field strength in V/m?: ')) 
 
@@ -147,28 +166,45 @@ class laser_parameter():
         else:
             self.p_rf = np.nan
 
-    def set_power(self, feild, laser_p):
+    def set_power(self, feild: str, laser_p: float) -> None:
+        """Sets the laser power. This function will return np.Nan if the radio field type is 'R'.
+
+        Args:
+            feild (str): Field type. This should be 'L' as it will relate to the laser power.
+            laser_p (float): The laser power in mW.
+        """
         if (feild == 'L'):
             if laser_p != 'Unset':
-                self.p = float(laser_p/1000)# laser power in W
-                #print(self.p)
+                self.p = float(laser_p/1000) # laser power in W
             else: 
                 my_input=float(input('Please enter laser power in mW: '))
-                self.p = my_input/1000#laser power in W
+                self.p = my_input/1000 # laser power in W
         else:
             self.p = np.nan
 
-    def set_waist(self, feild, waist):
+    def set_waist(self, feild: str, waist: float) -> None:
+        """Sets the beam waist for the laser
+
+        Args:
+            feild (str): Field type. This should be 'L' as it will relate to the laser power.
+            waist (float): The beam waist diameter in um.
+        """
         if (feild == 'L'):
             if waist != 'Unset':
                 self.w = float(waist*10**(-6))# Micrometers
             else: 
                 my_input=float(input(r'Please enter laser waist in $\mu$ M: '))
-                self.w  = my_input*10**(-6) #micrometers
+                self.w  = my_input*10**(-6) # micrometers
         else:
             self.w = np.nan
     
-    def set_q(self, q_set, OAM_list =['-1', '0', '1']):
+    def set_q(self, q_set: int) -> None:
+        """Sets the polarisation of the EM field, either radio or laser.
+
+        Args:
+            q_set (int): The polarisation state of the interacting field. If '-1', the field in clockwise circulary polarised (-sigma transition), if '0' the field is linearly polarised (pi transition), and if '1' the field is anti-clockwise polarised (+sigma transition)
+        """
+        OAM_list =['-1', '0', '1']
         while True:
             if q_set != 'Unset':
                 self.q = int(q_set)
@@ -186,7 +222,13 @@ class laser_parameter():
                     print("That makes no sense...")
                     continue    
 
-    def set_onress(self,ress, OAM_list =['Y','N']):
+    def set_onress(self, ress: str) -> None:
+        """Sets the interacting field to be on resonance with the atomic transistion it is probing. This is a 'Y/N' option.
+
+        Args:
+            ress (str): 'Y' if the transition is on resonance, and 'N' if the transition is not on resonance.
+        """
+        OAM_list =['Y','N']
         while True: 
             if ress != 'Unset':
                 if (ress not in OAM_list):
@@ -210,7 +252,14 @@ class laser_parameter():
                     print("That makes no sense...")
                     continue        
     
-    def set_scanning_source(self, scan ,onress, OAM_list =['Y','N']):
+    def set_scanning_source(self, scan: str ,onress: str) -> None:
+        """Sets which field to scan over when inspecting the atomic transition. Note, a field that is being scanned over will not be able to be set to on resonance. If the field is scanned over, this option overrides the onress option. If the field is not on resonance and not scanning, the upper and lower dephasing limits must be set to be equal. 
+
+        Args:
+            scan (str): 'Y' if the field is going to be changed/inspected. If 'N' the field is assumed to bea fixed wavelength.
+            onress (str): 'Y' if the field is on resonance with the atomic transition, else 'N'.
+        """
+        OAM_list =['Y','N']
         while True:
             if (onress == 'Y'):
                 self.scanning_source = 'N'
@@ -240,7 +289,13 @@ class laser_parameter():
                         print("That makes no sense...")
                         continue 
 
-    def set_dphase_l(self, onress, deph_l):
+    def set_dphase_l(self, onress: str, deph_l: float) -> None:
+        """The lower bound of the dephasing (distance from on resonance). If the transition is on resonace, the dephasing is overwritten to equal 0.
+
+        Args:
+            onress (str): The option of whether the transition is fixed to the atomic transition.
+            deph_l (float): The lower distance from the resonant value, in MHz.
+        """
         if (onress == 'Y'):
             self.dephase_lower = 0
         else:
@@ -251,7 +306,13 @@ class laser_parameter():
                 myinput = float(input('please enter lower dephasing value in MHz:'))
                 self.dephase_lower = myinput*(10**(6))## MHz
 
-    def set_dphase_u(self, onress, deph_u):
+    def set_dphase_u(self, onress: str, deph_u: float) -> None:
+        """The upper bound of the dephasing (distance from on resonance). If the transition if on resonace, the dephasing is overwritten to equal 0.
+
+        Args:
+            onress (str): The option of whether the transition is fixed to the atomic transition.
+            deph_u (float): The upper distance from the resoant value, in MHz.
+        """
         if (onress == 'Y'):
             self.dephase_upper = 0.0
         else:
@@ -261,7 +322,13 @@ class laser_parameter():
                 myinput = float(input('please enter upper dephasing value in MHz:'))
                 self.dephase_upper = myinput*(10**(6))
     
-    def set_laser_line(self, feild, laser_line):
+    def set_laser_line(self, feild: str, laser_line: float) -> None:
+        """Sets the linewidth of the laser, this only impacts the linewidth if the field value is set to 'L'.
+
+        Args:
+            feild (str): The type of field, 'L'
+            laser_line (float): The linewidth of the laser in kHz.
+        """
         if (feild == 'L'):
             if laser_line != 'Unset':
                 self.laser_line = float((laser_line*10**(3)))#kHz
@@ -271,7 +338,14 @@ class laser_parameter():
         else:
             self.laser_line = 0.0
     
-    def set_beam_prop(self, feild, beam_prop, OAM_list = ['1', '-1']):
+    def set_beam_prop(self, feild: str, beam_prop: int) -> None:
+        """Sets the propagation direction of the laser beam. This only impacts the field if the field is an 'L' field.
+
+        Args:
+            feild (str): The type of field, 'L'
+            beam_prop (int): The propogation direction along the optical axis. If 1, it propgates in the positive direction, and if -1, the negative direction.
+        """
+        OAM_list = ['1', '-1']
         if (feild == 'L'):
             while True:
                 if beam_prop !='Unset':
@@ -300,7 +374,22 @@ class laser_parameter():
     
    
     def __init__(self, f = 'Unset', vm ='Unset', laser_p ='Unset', waist = 'Unset', q_set= 'Unset', ress= 'Unset', scan = 'Unset', deph_l ='Unset', deph_u = 'Unset', laser_line='unset', temp = 'Unset',beam_prop = 'Unset'):
-        
+        """To create a field parameter object, all of the key experimental parameters are used here. These will also set the numerical 'experiment' parameters, e.g. which wavelengths are being scanned over.
+
+        Args:
+            f (str, optional): The type of field 'L' for a laser, 'R' for a radio wave. Defaults to 'Unset'.
+            vm (float, optional): Field strength of an RF wave, in V m^(-1). Defaults to 'Unset'.
+            laser_p (float, optional): The power of the laser beam in mW. Defaults to 'Unset'.
+            waist (float, optional): The width of a laser beam in um. Defaults to 'Unset'.
+            q_set (int, optional): The polarisation state of the field, from the set {-1, 0, 1}. Defaults to 'Unset'.
+            ress (str, optional): Whether the interacting field is on ('Y') or off ('N') resonance with the associated atomic transtion. Defaults to 'Unset'.
+            scan (str, optional): Whether the field will be scanned over the atomic transition. Defaults to 'Unset'.
+            deph_l (float, optional): The lower limit of the scan. Defaults to 'Unset'.
+            deph_u (float, optional): The upper limit of the scan. Defaults to 'Unset'.
+            laser_line (float, optional): The linewidth of the laser in kHz. Defaults to 'unset'.
+            temp (float, optional): The temperature of the system in K. Defaults to 'Unset'.
+            beam_prop (int, optional): The propagation direction. Defaults to 'Unset'.
+        """
         self.feild = "unset"
         self.onress = "unset"
         self.dephase_lower = np.nan
@@ -328,9 +417,15 @@ class laser_parameter():
         self.set_temp(temp)
         self.set_beam_prop(self.feild, beam_prop)       
 
-class state_describing_object():
-    
-    def set_N(self, N):    
+class state_describing_object:
+    """ The is the Qunautm numbers assiociated with the N level system. 
+    """
+    def set_N(self, N: int) -> None:   
+        """Sets tthe numerical value for the principal quantum number
+
+        Args:
+            N (int): The principal quantum number
+        """
         while True:
              
             if (N != 'Unset'):
@@ -353,7 +448,14 @@ class state_describing_object():
                     print("That makes no sense...")
                     continue
 
-    def get_L(self, l, OAM_list = ['S','P','D','F','G']):
+    def get_L(self, l: str):
+        """Sets the string representation of the orbital angular momentum symbol.
+
+        Args:
+            l (str): The string representing the orbital angular momentum.
+        """
+        
+        OAM_list = ['S','P','D','F','G']
 
         while True: 
             if l !='Unset':
@@ -377,8 +479,12 @@ class state_describing_object():
                     print("That makes no sense...")
                     continue
 
-    def get_num_L(self, L):
+    def get_num_L(self, L: str) -> None:
+        """Sets the numerical value for the orbital angular momentum.
 
+        Args:
+            L (str): The symbol, as part of a term symbol, for the orbital angular momentum, e.g. 'S', 'P', etc.
+        """
         if L =="S":
             num_L = 0
         elif L == "P":
@@ -391,10 +497,16 @@ class state_describing_object():
             num_L= 4
         else: 
             num_L = np.nan
-            print("you screwed up")
+            print("Invalid term symbol")
         self.numerical_L = num_L
 
-    def get_J(self, L, j):
+    def get_J(self, L: int, j: str) -> None:
+        """Sets the total angular momentum to a value of L+0.5 or L-0.5.
+
+        Args:
+            L (int): The integer value of the orbital angular momentum (the quantum number).
+            j (str): A string denoting whether the total angular momentum is positive or negative. This relates to the spin of the promoted electron, i.e. is it co- or counter-propogating with respect to the orbit.
+        """
         while True: 
             if j != 'Unset':
                 j = str.upper(j)
@@ -428,7 +540,13 @@ class state_describing_object():
                     print("That makes no sense (crashed)...")
                     continue 
     
-    def get_mj(self, J, MJ):
+    def get_mj(self, J: float, MJ: Union[float, str]) -> None:
+        """Sets the mj value. mj = -j, -j+1 ...j-1, j. 
+
+        Args:
+            J (float): Total angualer momentum
+            MJ (Union[float, str]): The second angular momentum number.
+        """
         while True:
             if MJ != 'Unset':
                 self.mj = float(MJ)
@@ -447,22 +565,37 @@ class state_describing_object():
                     else:
                         self.mj = myinput
                         break   
-                except: 
+                except ValueError: 
                     print("That makes no sense (crashed)...")
                     continue  
-    
-    def __str__(self):
+
+    def __str__(self) -> str:
 
         print_string = str(self.energy_level) + str(self.L) + str(self.numerical_L) +  str(self.J) +str(self.mj)
 
-        return(print_string)
+        return print_string
     
-    def get_name(self,n, l, j):
+    def get_name(self, n: int, l: str, j: float) -> None:
+        """Sets the name property of the state describing object. This is a representation of the term symbol, i.e. 5S_{0.5}.
+
+        Args:
+            n (int): The principal quantum number.
+            l (str): The orbital angular momentum symbol.
+            j (float): The total angular momentum.
+        """
+
         self.name =str(n)+str(l)+str('_')+str('{')+str(j)+str('}')
-        pass
         
 
-    def __init__(self, n = 'Unset' , l = 'Unset', j ='Unset', MJ = 'Unset'):
+    def __init__(self, n = 'Unset' , l = 'Unset', j ='Unset', MJ = 'Unset') -> None:
+        """When creating a state describing object, any 'Unset' parameters will be requested from the user via the commmand line. This allows for its use in both command line applications, and as part of larger simulations.
+
+        Args:
+            n (int, optional): The principal quantum number. Defaults to 'Unset'.
+            l (str, optional): A single character that describes the orbital angualar momentum, which will be: 'S' if L=0, 'P' if L=1 etc. This is not case sensitive. Defaults to 'Unset'.
+            j (str, optional): This ask if the total angular moment is positive giving the higher value j = l+1/2. Chose from 'Y' is postive j = l+1/2 or 'N' for negative j = l-1/2. Defaults to 'Unset'.
+            MJ (float, optional): This is the secondary angular momentum. This should be mj = -j, -j+1 ...j-1, j. Defaults to 'Unset'.
+        """
         self.energy_level = "Unset"
         self.L = "unset"
         self.numerical_L = np.nan
@@ -554,7 +687,7 @@ if __name__ =='__main__':
     rfpower = [0.5, 1, 1.5, 2, 3.57]#rb RF poweer[0.5, 1, 1.5, 2, 3.57] #Cs RF power [0.05, 0.25, 0.5, 0.75, 1] 
     probe_power = Rf_ress #rb probe powers [ 0.005, 0.01, 0.017, 0.025, 0.05 ]# Cs probe powers [0.0032, 0.0064, 0.0096,0.0128, 0.016]
     
-###### variables ######    
+    ###### variables ######    
     blank = [] # Full half maxium store for probe only transition
     EITconl = []# Full half maxium store for probe only transition
     rfspilt =[]# RF splitting measurement
@@ -607,7 +740,7 @@ if __name__ =='__main__':
                     #    this_state = state_describing_object(44,'g','y', 4.5)# 84, 'd',  'y', 2.5) #this is the object built from user input    
                                                 
                     state_array.append(this_state) # this is n number of state informatin the user asked for
-        
+                
                 for b in range(number_states-1):
                     #print('please enter laser information for ' + str(i) + 'th tranistion-----')
                     if b == 0:  # 0.000589, 0.00101, 0.001313, 0.002095,0.002589, 0.00334, 0.00354
@@ -646,8 +779,7 @@ if __name__ =='__main__':
         
                 ### steady state builder for EIT for an nxn steady state system
                 chi, delta_p_1 = EITSS.EIT_builder(number_states,Trans_wave, decay_wave, laser_trans, dephasing_step)
-        
-                
+            
                 
                 
                 

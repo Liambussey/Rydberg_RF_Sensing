@@ -23,8 +23,19 @@ import numpy as np
 import liams_windows_config
 import csv
 
-def state_array_dataframe_generator(state_array):
+from arc import Rubidium85
 
+from Rydberg_Cs_example_paper_natural_decay_multiple_lines import state_describing_object
+
+def state_array_dataframe_generator(state_array: list[state_describing_object]) -> pd.DataFrame:
+    """Creates a dataframe containing the information for the relevant atomic transitions for a given system.
+
+    Args:
+        state_array (list[state_describing_object]): An object that will contain the specific atomic infomation.
+
+    Returns:
+        pd.DataFrame: A dataframe containing the quantum numbers of all of the transitions of the system.
+    """
     state_df = pd.DataFrame(columns = ['name','n','l','j','mj'])
 
     for i in range(len(state_array)):
@@ -39,21 +50,44 @@ def state_array_dataframe_generator(state_array):
 
     return(state_df)
 
-def get_state_lifetime(atom,N,L,J,T=300):
+def get_state_lifetime(atom: list[Rubidium85], N :int, L: int ,J: float ,T=300) -> float:
+    """_summary_
+
+    Args:
+        atom (list[Rubidium85]): This is a list containing the ARC object of Rb85, but may contain any relevant atomic species. This must be an ARC atom class.
+        N (int): Principal quantum number.
+        L (int): The orbital angular momentum quantum number.
+        J (float): The total angular momentum.
+        T (int, optional): The temperature of the system in K. Defaults to 300.
+
+    Returns:
+        float: The state (natural) lifetime of the atomic transtion, in s.
+    """
+
     #atom = atomic species and natrually occuring or isotopic
     #N = Princple QN, L = Orbital Angular Momentum QN,
     #J= Total angular momentum,
     #T = Temperature in Kelvin
     
-    val = [atom[i].getStateLifetime(int(N), 
+    lifetime = [atom[i].getStateLifetime(int(N), 
                                 int(L), 
                                 J, 
                                 temperature = T, 
                                 includeLevelsUpTo=int(N+10)
                                 )for i in range(len(atom))]
-    return(val)
+    return lifetime
 
-def transition_picker(state_array, atom, vbose = False):
+def transition_picker(state_array: list[state_describing_object], atom: list[Rubidium85], vbose=False) -> pd.DataFrame:
+    """ This is used to create a Dataframe of atomic state the user has entered and find the state lifetime assoicated with those states.  
+
+    Args:
+        state_array (list[state_describing_object]): An object that will contain the specific atomic infomation.
+        atom (list[Rubidium85]): This is a list containing the ARC object of Rb85, but may contain any relevant atomic species. This must be an ARC atom class.
+        vbose (bool, optional): A flag set for writing CSVs. Do not change this value. Defaults to False.
+
+    Returns:
+        pd.DataFrame: Dataframe containing information on the atomic transitions of interest and calculate the state lifetime up N+10 levels
+    """
 
     config = liams_windows_config.liams_windows_config()  
 
@@ -69,7 +103,7 @@ def transition_picker(state_array, atom, vbose = False):
     state_df1[name_list] = state_df.apply(lambda x: get_state_lifetime(atom, x.n, x.l, x.j), axis= 1, result_type = 'expand')
 
 
-    return(state_df1)  
+    return state_df1
     
 if __name__ =='__main__':
     

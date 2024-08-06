@@ -8,8 +8,15 @@ from scipy.constants import c as c_c ## speed of light
 from scipy.constants import h as c_h # planck constant
 from scipy.constants import hbar as hbar #reduced planks
 
-def basis_generator(number_states):
+def basis_generator(number_states: int) -> list[qp.Qobj]:
+    """This generates the number of Fock basis state
 
+    Args:
+        number_states (int): This is the Interger value for the total number of atomic state in the system.
+
+    Returns:
+        list[qp.Qobj]: List of N = number_states Fock states 
+    """
     #### basis state for a N system
     basis_list =[]
 
@@ -19,8 +26,16 @@ def basis_generator(number_states):
 
     return(basis_list)
 
-def atomic_operators(basis, number_states):
+def atomic_operators(basis: list[qp.Qobj], number_states: int) -> list[qp.Qobj]:
+    """This function uses the basis state and number of state to create the atomic jump operators
 
+    Args:
+        basis (list[qp.Qobj]): List of N = number_states Fock states 
+        number_states (int): This is the Interger value for the total number of atomic state in the system.
+
+    Returns:
+        list[qp.Qobj]: list of creation and annihilation operators 
+    """
     #### sigma operator or atomic jump operator 
     sigma_operator = []#np.zeros(shape = ((number_state),(number_state)))
 
@@ -32,7 +47,7 @@ def atomic_operators(basis, number_states):
             
     return(sigma_operator)
 
-def Hamil_builder(number_states, Trans_wave, dephasing):
+def Hamil_builder(number_states: int, Trans_wave: pd.DataFrame, dephasing: list[float]) -> np.array:
   
     Hamiltonian = np.zeros(shape=((number_states),(number_states)))                     ### NxN matrix of zeros to form the base Hamiltonian 
     
