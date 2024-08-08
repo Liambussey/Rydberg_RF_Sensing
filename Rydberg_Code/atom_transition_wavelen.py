@@ -17,9 +17,9 @@ import liams_windows_config
 import arc
 
 
-from Rydberg_Cs_example_paper_natural_decay_multiple_lines import state_describing_object, laser_parameter
+#from Rydberg_Cs_example_paper_natural_decay_multiple_lines import state_describing_object, laser_parameter
 
-def state_array_dataframe_generator(state_array: list[state_describing_object], laser: list[laser_parameter]) -> pd.DataFrame:
+def state_array_dataframe_generator(state_array: list["state_describing_object"], laser: list["laser_parameter"]) -> pd.DataFrame:
     """This collates the information require for excitation tranisition between neighbouring states in the State_array, these transition must obey Hunds selection rules.
 
     Args:
@@ -54,7 +54,7 @@ def state_array_dataframe_generator(state_array: list[state_describing_object], 
         state_df = pd.concat([state_df, single_record])
     return state_df
 
-def state_array_dataframe_generator_decay(state_array: list[state_describing_object], laser: list[laser_parameter]) -> pd.DataFrame:
+def state_array_dataframe_generator_decay(state_array: list["state_describing_object"], laser: list["laser_parameter"]) -> pd.DataFrame:
     """This collates the information require for decay tranisition between neighbouring states in the State_array, these transition must obey Hunds selection rules.
         To create this decay dataframe the state and laser arrays need to stay in the same order.
 
@@ -165,7 +165,7 @@ def getdens(atom: list[arc.Rubidium85], temp: float) -> list[float]:
     return [atom[i].getNumberDensity(temp) for i in range(len(atom))]
     
 
-def transition_generator_excitation(atom_list: list[arc.Rubidium85], interested_state: pd.DataFrame, laser: list[laser_parameter])-> pd.DataFrame:
+def transition_generator_excitation(atom_list: list[arc.Rubidium85], interested_state: pd.DataFrame, laser: list["laser_parameter"])-> pd.DataFrame:
     """This calculate the physical parameter which impact the excitation pathways in the defined atomic system
 
     Args:
@@ -228,7 +228,7 @@ def transition_generator_excitation(atom_list: list[arc.Rubidium85], interested_
                                                         axis=1, result_type='expand')
     return (trans_wave)
 
-def transition_generator_decay(atom_list: list[arc.Rubidium85], interested_state: pd.DataFrame, laser: list[laser_parameter]) -> pd.DataFrame:
+def transition_generator_decay(atom_list: list[arc.Rubidium85], interested_state: pd.DataFrame, laser: list["laser_parameter"]) -> pd.DataFrame:
     """This calculate the physical parameter which impact the decay pathways in the defined atomic system
 
     Args:
@@ -273,7 +273,7 @@ def transition_generator_decay(atom_list: list[arc.Rubidium85], interested_state
     return (trans_wave)
 #### Using the FWHM to calculate laser waist (must check units as linewidth is giveing in KHz) can be changed back if needed using   w
                                     
-def get_rabi(atom_list: list[arc.Rubidium85], feild: str, n1: int, l1: int, j1: float, mj1: float, n2: int, l2: int, j2: float, mj2: float, q: int, p: float, w: float, p_rf: float, linewidth: float) ->list[float]:
+def get_rabi(atom_list: list[arc.Rubidium85], feild: str, n1: int, l1: int, j1: float, mj1: float, n2: int, l2: int, j2: float, q: int, p: float, w: float, p_rf: float, linewidth: float) ->list[float]:
     """Gets the Rabi Frequency for the defined tranision using ARC `getRabiFrequency` or `getRabiFrequency2`
 
     Args:
@@ -286,7 +286,6 @@ def get_rabi(atom_list: list[arc.Rubidium85], feild: str, n1: int, l1: int, j1: 
         n2 (int): Upper principal quantum number.
         l2 (int): Upper orbital angular momentum quantum number.
         j2 (float): Upper total angular momentum.
-        mj2 (float): upper second angular momentum number. not used in this function
         q (int): The polarisation state of the field, from the set {-1, 0, 1}.
         p (float): The power of the laser beam in mW.
         w (float): The width of a laser beam in um.

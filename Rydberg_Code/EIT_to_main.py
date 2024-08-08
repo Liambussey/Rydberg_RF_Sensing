@@ -8,6 +8,11 @@ from scipy.constants import c as c_c ## speed of light
 from scipy.constants import h as c_h # planck constant
 from scipy.constants import hbar as hbar #reduced planks
 
+#from Rydberg_Cs_example_paper_natural_decay_multiple_lines import laser_parameter
+
+
+from typing import Union
+
 def basis_generator(number_states: int) -> list[qp.Qobj]:
     """This generates the number of Fock basis state
 
@@ -31,7 +36,7 @@ def atomic_operators(basis: list[qp.Qobj], number_states: int) -> list[qp.Qobj]:
 
     Args:
         basis (list[qp.Qobj]): List of N = number_states Fock states 
-        number_states (int): This is the Interger value for the total number of atomic state in the system.
+        number_states (int): This is the interger value for the total number of atomic state in the system.
 
     Returns:
         list[qp.Qobj]: list of creation and annihilation operators 
@@ -48,7 +53,16 @@ def atomic_operators(basis: list[qp.Qobj], number_states: int) -> list[qp.Qobj]:
     return(sigma_operator)
 
 def Hamil_builder(number_states: int, Trans_wave: pd.DataFrame, dephasing: list[float]) -> np.array:
-  
+    """_summary_
+
+    Args:
+        number_states (int): This is the interger value for the total number of atomic state in the system.
+        Trans_wave (pd.DataFrame): Dataframe with the expanded information on the excitation pathway gathered using ARC
+        dephasing (list[float]): This is a list of floats containing the dephasing scanning range and number of steps
+
+    Returns:
+        np.array: This 2D array contains the an nxn Hamiltionian 
+    """
     Hamiltonian = np.zeros(shape=((number_states),(number_states)))                     ### NxN matrix of zeros to form the base Hamiltonian 
     
 
@@ -66,8 +80,17 @@ def Hamil_builder(number_states: int, Trans_wave: pd.DataFrame, dephasing: list[
     
     return(Hamiltonian)
 
-def collapse_op(number_state, basis, decay_wave):
+def collapse_op(number_state: float, basis: list[qp.Qobj], decay_wave: pd.DataFrame) -> np.array :
+    """Natrual Decay collapse operator 
 
+    Args:
+        number_state (float): This is the interger value for the total number of atomic state in the system.
+        basis (list[qp.Qobj]): List of N = number_states Fock states 
+        decay_wave (pd.DataFrame): This a Dataframe with the expanded information on the decay pathway gathered using ARC.
+
+    Returns:
+        np.array: This return an array of collapse operature generaterd using the natural decay taken from ARC
+    """
     natural_line =[]
     for i in range(number_state - 1):
         #spontaneous decay in Hz
@@ -89,7 +112,18 @@ def collapse_op(number_state, basis, decay_wave):
     return(ls)
     
 
-def collapse_op_laser(number_state, laser_trans, basis, Trans_wave):
+def collapse_op_laser(number_state: float, laser_trans: list["laser_parameter"], basis: list[qp.Qobj], Trans_wave: pd.DataFrame) -> list:
+    """Laser linewidth collapse operator, allow for the braodening of the transition based on the laser linewidth, this will set the RF linewidth to zero
+
+    Args:
+        number_state (float): This is the interger value for the total number of atomic state in the system.
+        laser_trans (list[laser_parameter]): This is a list of field parameter object, all of the key experimental parameters are used here. These will also set the numerical 'experiment' parameters, e.g. which wavelengths are being scanned over.
+        basis (list[qp.Qobj]): List of N = number_states Fock states 
+        Trans_wave (pd.DataFrame): This a Dataframe with the expanded information on the excitation pathway gathered using ARC.
+
+    Returns:
+        list: returns a list of collapse operator for the laser linewidth
+    """
  #laser linewidth in Hz
     laser_line =[]
     for i in range(number_state - 1):
@@ -111,9 +145,18 @@ def collapse_op_laser(number_state, laser_trans, basis, Trans_wave):
             op[i, j] = (np.sum(laser_line_value[:(j-i)]))
             
         ls.append(op)
-    return(ls)
+    return ls
   
-def dephase_dataframe_generator(laser_trans, Trans_wave):
+def dephase_dataframe_generator(laser_trans: list["laser_parameter"], Trans_wave: pd.DataFrame)->pd.DataFrame:
+    """This function merges a set of list parameter and items store in a dataframe into a new datafram to allow for easier removal of data in other functions
+
+    Args:
+        laser_trans (list[laser_parameter]): This is a list of field parameter object, all of the key experimental parameters are used here. These will also set the numerical 'experiment' parameters, e.g. which wavelengths are being scanned over.
+        Trans_wave (pd.DataFrame): This a Dataframe with the expanded information on the excitation pathway gathered using ARC.
+
+    Returns:
+        pd.DataFrame: DataFrame contain infromation on the resonance, scanning source, dephasing bounds, wavelength, speed, frequency, mass and beam propigation direction
+    """
     dephase_df = pd.DataFrame(columns=['onress', 'dephase_lower',
                                        'dephase_upper',"scanning_source",
                                        'wavelength',"mean_speed",'beam_prop'])
@@ -131,10 +174,20 @@ def dephase_dataframe_generator(laser_trans, Trans_wave):
                           
         dephase_df = pd.concat([dephase_df,single_record])             
     
-    return(dephase_df)
+    return dephase_df
 
-def dephase(laser_trans, number_states, dephasing_step, Trans_wave):
+def dephase(laser_trans: list["laser_parameter"], number_states: float, dephasing_step: float, Trans_wave: pd.DataFrame) -> list:
+    """creates the dephasing list based on the number of steps and boundaries.
 
+    Args:
+        laser_trans (list[laser_parameter]): This is a list of field parameter object, all of the key experimental parameters are used here. These will also set the numerical 'experiment' parameters, e.g. which wavelengths are being scanned over.
+        number_states (float): This is the interger value for the total number of atomic state in the system.
+        dephasing_step (float): This is how may step are used to creat the dephasing scan between the upper and lower scan freqeucy
+        Trans_wave (pd.DataFrame): This a Dataframe with the expanded information on the excitation pathway gathered using ARC.
+
+    Returns:
+        list: list of dephasing values bound between the lower and upper bounds 
+    """
     dephase_df = dephase_dataframe_generator(laser_trans, Trans_wave)
     #print(dephase_df.scanning_source)
     dephasing_range = np.zeros(shape=(dephasing_step, (number_states-1)))
@@ -175,9 +228,22 @@ def dephase(laser_trans, number_states, dephasing_step, Trans_wave):
             dephasing[:,j] = (dephasing[:,j-1]+dephasing_range[:,j])#dephasing_range[:,j])
 
     dephasing = dephasing
-    return(dephasing)
+    return dephasing
 
-def EIT_builder(number_state, Trans_wave, decay_wave, laser_trans,dephasing_step):
+def EIT_builder(number_state: float, Trans_wave: pd.DataFrame, decay_wave: pd.DataFrame, laser_trans: list["laser_parameter"], dephasing_step: float) -> Union[pd.DataFrame, list]:
+    """This function calls multiple subfunction required build the desire hamiltonian and collapse operators to solve the steady state solution of the density matrix using Qutip steadystate solve.
+
+    Args:
+        number_state (float): This is the interger value for the total number of atomic state in the system.
+        Trans_wave (pd.DataFrame): This a Dataframe with the expanded information on the excitation pathway gathered using ARC.
+        decay_wave (pd.DataFrame): This a Dataframe with the expanded information on the decay pathway gathered using ARC.
+        laser_trans (list[laser_parameter]): This is a list of field parameter object, all of the key experimental parameters are used here. These will also set the numerical 'experiment' parameters, e.g. which wavelengths are being scanned over.
+
+        dephasing_step (float): This is how may step are used to creat the dephasing scan between the upper and lower scan freqeucy.
+
+    Returns:
+        Union[pd.DataFrame, list]: This return a pd.Dataframe containing the steady solution to the density matrix rho_12, rho_13.. etc. and a list containing the dephasing scan to be plotted over. 
+    """
 
     ### bais is the ket vector for the number of states in the atom 
     basis_list = basis_generator(number_state)

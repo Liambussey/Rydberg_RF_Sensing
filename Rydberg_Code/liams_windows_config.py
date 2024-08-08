@@ -12,5 +12,6 @@ class liams_windows_config():
 
     def __init__(self): 
         self.file_system_params()
-        
+if __name__ == '__main__': 
+    print('this should be inported into main file')       
     

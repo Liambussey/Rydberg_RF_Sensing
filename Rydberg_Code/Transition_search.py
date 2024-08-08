@@ -17,6 +17,7 @@ import sys
 sys.path.append('C:/Users/liamw/Desktop/RYDBERG_GIT-1') 
 sys.path.append('C:/Users/liamw/Desktop/Rydberg_Git/src')
 sys.path.append('C:/Users/liamw/Desktop/Rydberg_Git/src/PhD_Rydberg_code_version_1')
+sys.path.append('C:/Users/liamw/Desktop/Rydberg_Git/src/PhD_Rydberg_code_version_1/Springer/Rydberg_Code')
 
 import pandas as pd 
 import numpy as np
@@ -25,9 +26,11 @@ import csv
 
 from arc import Rubidium85
 
-from Rydberg_Cs_example_paper_natural_decay_multiple_lines import state_describing_object
 
-def state_array_dataframe_generator(state_array: list[state_describing_object]) -> pd.DataFrame:
+
+
+
+def state_array_dataframe_generator(state_array: list["state_describing_object"]) -> pd.DataFrame:
     """Creates a dataframe containing the information for the relevant atomic transitions for a given system.
 
     Args:
@@ -36,6 +39,7 @@ def state_array_dataframe_generator(state_array: list[state_describing_object]) 
     Returns:
         pd.DataFrame: A dataframe containing the quantum numbers of all of the transitions of the system.
     """
+    #from Rydberg_Cs_example_paper_natural_decay_multiple_lines import state_describing_object
     state_df = pd.DataFrame(columns = ['name','n','l','j','mj'])
 
     for i in range(len(state_array)):
@@ -77,7 +81,7 @@ def get_state_lifetime(atom: list[Rubidium85], N :int, L: int ,J: float ,T=300) 
                                 )for i in range(len(atom))]
     return lifetime
 
-def transition_picker(state_array: list[state_describing_object], atom: list[Rubidium85], vbose=False) -> pd.DataFrame:
+def transition_picker(state_array: list["state_describing_object"], atom: list[Rubidium85], vbose=False) -> pd.DataFrame:
     """ This is used to create a Dataframe of atomic state the user has entered and find the state lifetime assoicated with those states.  
 
     Args:
